@@ -1,5 +1,7 @@
 from pydantic_settings import BaseSettings
 from typing import Literal
+from pathlib import Path
+import os
 
 
 class Settings(BaseSettings):
@@ -11,10 +13,10 @@ class Settings(BaseSettings):
     ENV: Literal["development", "production"] = "development"
     
     # Database Configuration
-    DATABASE_URL: str = "sqlite:///./app.db"  # Loaded from .env
+    DATABASE_URL: str = "sqlite:///./app.db"
     
     # OpenAI Configuration
-    OPENAI_API_KEY: str = "sk-test-key"  # Will be loaded from .env
+    OPENAI_API_KEY: str = ""  # Required: Will be loaded from .env
     OPENAI_MODEL: str = "gpt-4"
     OPENAI_TEMPERATURE: float = 0.7
     OPENAI_MAX_TOKENS: int = 2000
@@ -32,7 +34,11 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     
     class Config:
-        env_file = ".env"
+        # Look for .env in the pod3 directory (pod3/.env)
+        env_file = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.dirname(__file__))), 
+            ".env"
+        )
         case_sensitive = True
 
 
