@@ -1,8 +1,8 @@
 """AI Service for OpenAI integration."""
 
 from openai import OpenAI, AsyncOpenAI
-from app.core.config import settings
-from app.services.prompt_builder import prompt_builder
+from ..core.config import settings
+from .prompt_builder import prompt_builder
 import json
 
 
@@ -10,8 +10,15 @@ class AIService:
     """Service for AI interactions with OpenAI API."""
     
     def __init__(self):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
-        self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        try:
+            self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+            self.async_client = AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        except Exception as e:
+            # Allow service to initialize even with invalid API key  
+            self.client = None
+            self.async_client = None
+            print(f"Warning: OpenAI client initialization failed: {e}")
+        
         self.model = settings.OPENAI_MODEL
         self.temperature = settings.OPENAI_TEMPERATURE
         self.max_tokens = settings.OPENAI_MAX_TOKENS

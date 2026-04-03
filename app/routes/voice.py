@@ -7,11 +7,11 @@ import os
 import time
 from io import BytesIO
 
-from app.services.ai_service import ai_service
-from app.services.session_service import session_service
-from app.services.prompt_builder import prompt_builder
-from app.services.analytics_service import analytics_service
-from app.core.config import settings
+from ..services.ai_service import ai_service
+from ..services.session_service import session_service
+from ..services.prompt_builder import prompt_builder
+from ..services.analytics_service import analytics_service
+from ..core.config import settings
 
 router = APIRouter(prefix="/voice", tags=["Voice"])
 

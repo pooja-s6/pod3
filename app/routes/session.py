@@ -3,9 +3,9 @@
 from fastapi import APIRouter, HTTPException
 from datetime import datetime
 
-from app.models.session_models import SessionCreateResponse, SessionInfo
-from app.services.session_service import session_service
-from app.core.config import settings
+from ..models.session_models import SessionCreateResponse, SessionInfo
+from ..services.session_service import session_service
+from ..core.config import settings
 
 router = APIRouter(prefix="/session", tags=["Session"])
 

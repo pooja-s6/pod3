@@ -10,8 +10,11 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     ENV: Literal["development", "production"] = "development"
     
+    # Database Configuration
+    DATABASE_URL: str = "sqlite:///./app.db"  # Loaded from .env
+    
     # OpenAI Configuration
-    OPENAI_API_KEY: str
+    OPENAI_API_KEY: str = "sk-test-key"  # Will be loaded from .env
     OPENAI_MODEL: str = "gpt-4"
     OPENAI_TEMPERATURE: float = 0.7
     OPENAI_MAX_TOKENS: int = 2000

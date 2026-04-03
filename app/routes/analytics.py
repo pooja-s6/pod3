@@ -2,9 +2,9 @@
 
 from fastapi import APIRouter, HTTPException
 
-from app.models.session_models import AnalyticsResponse
-from app.services.analytics_service import analytics_service
-from app.services.session_service import session_service
+from ..models.session_models import AnalyticsResponse
+from ..services.analytics_service import analytics_service
+from ..services.session_service import session_service
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 
@@ -43,7 +43,7 @@ async def get_global_analytics():
 async def cleanup_expired_sessions():
     """Clean up expired sessions (administrative endpoint)."""
     try:
-        from app.core.config import settings
+        from ..core.config import settings
         session_service.cleanup_expired_sessions(settings.SESSION_TIMEOUT)
         
         return {

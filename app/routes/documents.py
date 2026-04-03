@@ -6,16 +6,16 @@ import os
 import tempfile
 from datetime import datetime
 
-from app.models.document_models import (
+from ..models.document_models import (
     DocumentUploadResponse, DocumentInfo, DocumentQuestion, 
     DocumentQuestionResponse, DocumentList
 )
-from app.services.document_service import document_service
-from app.services.session_service import session_service
-from app.services.ai_service import ai_service
-from app.services.prompt_builder import prompt_builder
-from app.services.analytics_service import analytics_service
-from app.core.config import settings
+from ..services.document_service import document_service
+from ..services.session_service import session_service
+from ..services.ai_service import ai_service
+from ..services.prompt_builder import prompt_builder
+from ..services.analytics_service import analytics_service
+from ..core.config import settings
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 

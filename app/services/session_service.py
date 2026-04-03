@@ -2,7 +2,7 @@
 
 import uuid
 from datetime import datetime
-from app.utils.memory import session_memory
+from ..utils.memory import session_memory
 from typing import Dict, List, Optional
 
 

@@ -6,13 +6,13 @@ import uuid
 import time
 from datetime import datetime
 
-from app.models.chat_models import ChatRequest, ChatResponse, StreamChatRequest, ChatHistory
-from app.services.ai_service import ai_service
-from app.services.session_service import session_service
-from app.services.analytics_service import analytics_service
-from app.services.prompt_builder import prompt_builder
-from app.services.rag_service import rag_service
-from app.core.config import settings
+from ..models.chat_models import ChatRequest, ChatResponse, StreamChatRequest, ChatHistory
+from ..services.ai_service import ai_service
+from ..services.session_service import session_service
+from ..services.analytics_service import analytics_service
+from ..services.prompt_builder import prompt_builder
+from ..services.rag_service import rag_service
+from ..core.config import settings
 
 router = APIRouter(prefix="/ai", tags=["Chat"])
 

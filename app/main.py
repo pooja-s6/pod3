@@ -6,9 +6,13 @@ from fastapi.responses import JSONResponse
 import logging
 from datetime import datetime
 
-from app.core.config import settings
-from app.routes import chat, session, analytics, voice, documents
-from app.services.ai_service import ai_service
+from .core.config import settings
+from .core.database import create_all_tables
+from .routes import (
+    chat, session, analytics, voice, documents, progress, feedback, 
+    recommend, adaptive, proactive, learning_path
+)
+from .services.ai_service import ai_service
 
 # Configure logging
 logging.basicConfig(level=settings.LOG_LEVEL)
@@ -36,6 +40,12 @@ app.include_router(session.router)
 app.include_router(analytics.router)
 app.include_router(voice.router)
 app.include_router(documents.router)
+app.include_router(progress.router)
+app.include_router(feedback.router)
+app.include_router(recommend.router)
+app.include_router(adaptive.router)
+app.include_router(proactive.router)
+app.include_router(learning_path.router)
 
 
 # Health check endpoint
@@ -107,6 +117,17 @@ async def general_exception_handler(request, exc):
             "timestamp": datetime.now().isoformat()
         }
     )
+
+
+# Startup event
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database on startup."""
+    try:
+        create_all_tables()
+        logger.info("Database tables created successfully")
+    except Exception as e:
+        logger.error(f"Failed to create database tables: {str(e)}")
 
 
 # Startup event
