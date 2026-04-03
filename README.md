@@ -404,3 +404,21 @@ For issues or questions, contact the development team.
 
 **Last Updated**: March 31, 2024
 **Version**: 1.0.0
+
+
+### Document Endpoints (/documents)
+
+#### POST /documents/upload
+Upload and extract text from files (PDF, DOCX, Images, TXT).
+
+`ash
+curl -X POST 'http://localhost:8000/documents/upload?session_id=<YOUR_SESSION_ID>' \
+  -H 'accept: application/json' \
+  -H 'Content-Type: multipart/form-data' \
+  -F 'file=@sample.pdf;type=application/pdf'
+`
+
+**Dependencies:** Ensure you have installed the required libraries for document processing:
+`ash
+pip install PyPDF2 python-docx Pillow pytesseract python-multipart
+`
