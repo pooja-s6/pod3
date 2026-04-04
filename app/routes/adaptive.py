@@ -5,10 +5,10 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import get_db
-from ..services.adaptive_service import (
-    get_next_topic,
-    assess_understanding,
-    adjust_difficulty
+from ..services.tutor import (
+    get_adaptive_learning_path,
+    generate_feedback,
+    get_difficulty_adjustment
 )
 
 router = APIRouter(prefix="/adaptive", tags=["Adaptive Learning"])
@@ -39,10 +39,10 @@ async def get_next_appropriate_topic(
     Uses adaptive algorithms to recommend topics that match user's current level.
     """
     try:
-        next_topic = get_next_topic(user_id, current_topic, db)
+        learning_path = get_adaptive_learning_path(user_id, db)
         return {
             "status": "success",
-            "next_topic": next_topic,
+            "learning_path": learning_path,
             "recommendation_reason": "Based on your progress and learning pace"
         }
     except Exception as e:
@@ -65,16 +65,14 @@ async def assess_user_understanding(
     Returns adaptive feedback and next steps.
     """
     try:
-        assessment = assess_understanding(
+        feedback = await generate_feedback(
             user_id=user_id,
             topic_id=request.topic_id,
-            score=request.score,
-            time_spent_seconds=request.time_spent_seconds,
             db=db
         )
         return {
             "status": "success",
-            "assessment": assessment,
+            "feedback": feedback,
             "recommendation": "Feedback based on your performance"
         }
     except Exception as e:
@@ -96,7 +94,7 @@ async def adjust_learning_difficulty(
     Returns new difficulty level and adjusted content.
     """
     try:
-        adjustment = adjust_difficulty(
+        adjustment = get_difficulty_adjustment(
             user_id=user_id,
             current_difficulty=request.current_difficulty,
             last_score=request.last_score,

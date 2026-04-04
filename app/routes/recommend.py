@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import get_db
-from ..services.recommendation_service import (
+from ..services.tutor import (
     generate_recommendations,
     get_recommendations,
     acknowledge_recommendation

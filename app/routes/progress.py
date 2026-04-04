@@ -5,11 +5,10 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import get_db
-from ..services.progress_service import (
+from ..services.tutor import (
     update_user_progress,
     batch_update_progress,
-    get_user_statistics,
-    get_topic_progress
+    get_user_statistics
 )
 
 router = APIRouter(prefix="/progress", tags=["Progress Tracking"])

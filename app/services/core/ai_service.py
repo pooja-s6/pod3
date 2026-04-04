@@ -1,7 +1,7 @@
-"""AI Service for OpenAI integration."""
+"""AI Service for OpenAI integration - Core AI orchestration."""
 
 from openai import OpenAI, AsyncOpenAI
-from ..core.config import settings
+from ...core.config import settings
 from .prompt_builder import prompt_builder
 import json
 

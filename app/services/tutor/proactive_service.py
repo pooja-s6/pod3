@@ -1,12 +1,21 @@
-"""Proactive Service - Generates nudges and reminders for learning."""
+"""Proactive Service - Generates nudges and engagement reminders - Tutor Service."""
 
 from sqlalchemy.orm import Session
-from ..models.db_models import Nudge, UserProgress, Recommendation
+from ...models.db_models import Nudge, UserProgress, Recommendation
 from datetime import datetime, timedelta
 
 
-def generate_nudges(user_id: str, db: Session) -> list[dict]:
-    """Generate contextual nudges based on user activity."""
+def generate_nudges(user_id: str, db: Session) -> list:
+    """
+    Generate contextual nudges based on user activity.
+    
+    Args:
+        user_id: User identifier
+        db: Database session
+        
+    Returns:
+        List of generated nudges
+    """
     
     nudges_generated = []
     
@@ -76,8 +85,91 @@ def generate_nudges(user_id: str, db: Session) -> list[dict]:
     return nudges_generated
 
 
-def get_active_nudges(user_id: str, db: Session) -> list[dict]:
-    """Get all unacknowledged nudges for a user."""
+def check_user_engagement(user_id: str, db: Session) -> dict:
+    """
+    Check user engagement level and activity.
+    
+    Args:
+        user_id: User identifier
+        db: Database session
+        
+    Returns:
+        Engagement metrics
+    """
+    
+    progress_records = db.query(UserProgress).filter(
+        UserProgress.user_id == user_id
+    ).all()
+    
+    if not progress_records:
+        return {
+            "user_id": user_id,
+            "engagement_level": "inactive",
+            "last_activity": None,
+            "days_since_activity": None
+        }
+    
+    # Get last activity
+    last_activity = max(p.last_attempted for p in progress_records if p.last_attempted)
+    days_since = (datetime.utcnow() - last_activity).days if last_activity else None
+    
+    # Determine engagement level
+    if days_since is None or days_since > 7:
+        engagement = "inactive"
+    elif days_since > 3:
+        engagement = "low"
+    elif days_since > 1:
+        engagement = "moderate"
+    else:
+        engagement = "high"
+    
+    return {
+        "user_id": user_id,
+        "engagement_level": engagement,
+        "last_activity": last_activity,
+        "days_since_activity": days_since,
+        "topics_studied": len(progress_records),
+        "average_score": sum(p.score or 0 for p in progress_records) / len(progress_records)
+    }
+
+
+def send_proactive_message(user_id: str, message_type: str = "reminder") -> dict:
+    """
+    Send proactive message to user.
+    
+    Args:
+        user_id: User identifier
+        message_type: Type of message (reminder, motivation, suggestion)
+        
+    Returns:
+        Message sent status
+    """
+    
+    messages = {
+        "reminder": "It's been a while! Continue your learning journey.",
+        "motivation": "Great progress! Keep up the momentum.",
+        "suggestion": "Based on your performance, we recommend reviewing your weak areas."
+    }
+    
+    return {
+        "user_id": user_id,
+        "message_type": message_type,
+        "message": messages.get(message_type, "Continue your learning!"),
+        "sent_at": datetime.utcnow().isoformat()
+    }
+
+
+def get_active_nudges(user_id: str, db: Session) -> list:
+    """
+    Get all unacknowledged nudges for a user.
+    
+    Args:
+        user_id: User identifier
+        db: Database session
+        
+    Returns:
+        List of active nudges
+    """
     
     nudges = db.query(Nudge).filter(
         Nudge.user_id == user_id,
@@ -97,7 +189,16 @@ def get_active_nudges(user_id: str, db: Session) -> list[dict]:
 
 
 def acknowledge_nudge(nudge_id: str, db: Session) -> dict:
-    """Mark a nudge as acknowledged."""
+    """
+    Mark a nudge as acknowledged.
+    
+    Args:
+        nudge_id: Nudge identifier
+        db: Database session
+        
+    Returns:
+        Acknowledgment status
+    """
     
     nudge = db.query(Nudge).filter(Nudge.nudge_id == nudge_id).first()
     
@@ -108,43 +209,4 @@ def acknowledge_nudge(nudge_id: str, db: Session) -> dict:
     nudge.acknowledged_at = datetime.utcnow()
     db.commit()
     
-    return {"status": "acknowledged"}
-
-
-# Additional functions needed by routes
-def generate_nudge(user_id: str, context: str = None, db: Session = None) -> dict:
-    """Generate a single proactive nudge for user."""
-    return {
-        "message": "Time to practice! You haven't studied in 2 days.",
-        "type": "reminder",
-        "action": "start_lesson",
-        "priority": "medium"
-    }
-
-
-def get_learning_reminders(user_id: str, db: Session = None) -> list:
-    """Get pending learning reminders for user."""
-    return [
-        {
-            "title": "Review: Incomplete Topics",
-            "description": "You have 3 topics with scores below 75%",
-            "due_date": "2026-04-05",
-            "priority": "high"
-        },
-        {
-            "title": "Daily Learning Goal",
-            "description": "Complete 60 minutes of practice today",
-            "due_date": "2026-04-03",
-            "priority": "medium"
-        }
-    ]
-
-
-def send_motivation_message(user_id: str, message_type: str = "encouragement", db: Session = None) -> str:
-    """Get a motivational message for the user."""
-    messages = {
-        "encouragement": "You're making great progress! Keep up the consistent effort!",
-        "celebration": "Congratulations on achieving 80% on your recent assessment!",
-        "challenge": "Ready for a challenge? Try the advanced version of this topic!"
-    }
-    return messages.get(message_type, "Keep learning and growing every day!")
+    return {"status": "success", "nudge_id": nudge_id}

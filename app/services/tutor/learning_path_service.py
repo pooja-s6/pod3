@@ -1,7 +1,9 @@
-# Learning Path Service - Generates personalized learning roadmaps
+"""Learning Path Service - Generates personalized learning roadmaps - Tutor Service."""
+
 from sqlalchemy.orm import Session
-from ..models.db_models import UserProgress, User
+from ...models.db_models import UserProgress, User
 from datetime import datetime, timedelta
+
 
 def generate_learning_path(user_id: str, goal: str, duration_days: int = 30, db: Session = None) -> dict:
     """
@@ -14,7 +16,7 @@ def generate_learning_path(user_id: str, goal: str, duration_days: int = 30, db:
         db: Database session
         
     Returns:
-        Structured learning path
+        Structured learning path with milestones and daily schedule
     """
     
     # Get user progress
@@ -73,18 +75,35 @@ def calculate_daily_schedule(goal: str, duration_days: int, progress_list: list 
 
 
 def get_difficulty_progression(goal: str) -> list:
-    """Get difficulty progression for goal."""
+    """
+    Get difficulty progression for goal.
+    
+    Args:
+        goal: Learning goal
+        
+    Returns:
+        List of weekly difficulty progression
+    """
     return [
-        {"week": 1, "level": "beginner", "focus": "Basics"},
-        {"week": 2, "level": "beginner", "focus": "Foundations"},
+        {"week": 1, "level": "beginner", "focus": "Basics and Fundamentals"},
+        {"week": 2, "level": "beginner", "focus": "Foundation Concepts"},
         {"week": 3, "level": "intermediate", "focus": "Intermediate Concepts"},
-        {"week": 4, "level": "intermediate", "focus": "Application"},
-        {"week": 5, "level": "advanced", "focus": "Advanced Topics"},
+        {"week": 4, "level": "intermediate", "focus": "Practical Application"},
+        {"week": 5, "level": "advanced", "focus": "Advanced Topics and Edge Cases"},
     ]
 
 
 def calculate_milestones(goal: str, duration_days: int) -> list:
-    """Calculate learning milestones."""
+    """
+    Calculate learning milestones.
+    
+    Args:
+        goal: Learning goal
+        duration_days: Total duration
+        
+    Returns:
+        List of milestones with targets
+    """
     week_duration = duration_days // 4
     
     return [
@@ -96,10 +115,18 @@ def calculate_milestones(goal: str, duration_days: int) -> list:
 
 
 def get_success_criteria(goal: str) -> dict:
-    """Define success criteria for goal."""
+    """
+    Define success criteria for goal.
+    
+    Args:
+        goal: Learning goal
+        
+    Returns:
+        Success criteria
+    """
     return {
-        "min_score": 80,
-        "min_completion_percentage": 90,
-        "max_attempts": 3,
-        "time_investment": "60 minutes daily"
+        "overall_score": 85,
+        "completion_rate": 90,
+        "milestone_achievement": 4,
+        "practice_hours": 20
     }

@@ -3,8 +3,7 @@
 from fastapi import APIRouter, HTTPException
 
 from ..models.session_models import AnalyticsResponse
-from ..services.analytics_service import analytics_service
-from ..services.session_service import session_service
+from ..services.chatbot import analytics_service, session_service
 
 router = APIRouter(prefix="/analytics", tags=["Analytics"])
 

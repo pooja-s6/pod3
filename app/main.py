@@ -1,10 +1,10 @@
-"""Main FastAPI application."""
+"""FastAPI main application with AI Tutor and Chatbot features."""
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-import logging
 from datetime import datetime
+import logging
 
 from .core.config import settings
 from .core.database import create_all_tables
@@ -12,7 +12,7 @@ from .routes import (
     chat, session, analytics, voice, documents, progress, feedback, 
     recommend, adaptive, proactive, learning_path
 )
-from .services.ai_service import ai_service
+from .services.core import ai_service
 
 # Configure logging
 logging.basicConfig(level=settings.LOG_LEVEL)
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 app = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
-    description="Production-ready AI chatbot backend for learning platforms"
+    description="Production-ready AI Tutor & Chatbot backend for learning platforms"
 )
 
 # Add CORS middleware

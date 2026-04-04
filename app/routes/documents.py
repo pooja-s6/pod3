@@ -10,11 +10,8 @@ from ..models.document_models import (
     DocumentUploadResponse, DocumentInfo, DocumentQuestion, 
     DocumentQuestionResponse, DocumentList
 )
-from ..services.document_service import document_service
-from ..services.session_service import session_service
-from ..services.ai_service import ai_service
-from ..services.prompt_builder import prompt_builder
-from ..services.analytics_service import analytics_service
+from ..services.chatbot import document_service, session_service, analytics_service
+from ..services.core import ai_service, prompt_builder
 from ..core.config import settings
 
 router = APIRouter(prefix="/documents", tags=["Documents"])

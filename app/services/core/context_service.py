@@ -1,9 +1,8 @@
 # Context Builder Service - Builds intelligent context for AI from user data
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from ..models.db_models import User, SkillLevel
-from ..models.db_models import UserProgress
-from ..models.chat_models import Chat
+from ...models.db_models import User, SkillLevel, UserProgress, Chat
+
 
 def get_user_context(user_id: str, topic_id: str, db: Session) -> dict:
     """
@@ -15,7 +14,7 @@ def get_user_context(user_id: str, topic_id: str, db: Session) -> dict:
         db: Database session
         
     Returns:
-        Dictionary with user context data
+        Dictionary with user context data for prompt enhancement
     """
     
     # Fetch user profile
@@ -60,8 +59,26 @@ def get_user_context(user_id: str, topic_id: str, db: Session) -> dict:
         "weak_areas": weak_topics,
         "strong_areas": strong_topics,
         "recent_topics": recent_topics,
-        "overall_performance": total_score,
+        "overall_performance": round(total_score, 2),
         "total_topics_studied": len(all_progress)
     }
     
     return context
+
+
+def format_user_context_for_prompt(context: dict) -> str:
+    """Format user context object for injection into system prompt."""
+    formatted = f"""Student Profile:
+- Skill Level: {context.get('skill_level', 'beginner')}
+- Overall Performance: {context.get('overall_performance', 0)}%
+- Topics Studied: {context.get('total_topics_studied', 0)}
+- Current Topic Score: {context.get('current_topic_score', 0)}%
+- Attempts on Current Topic: {context.get('current_topic_attempts', 0)}"""
+    
+    if context.get('weak_areas'):
+        formatted += f"\n- Areas Needing Improvement: {', '.join(context['weak_areas'][:3])}"
+    
+    if context.get('strong_areas'):
+        formatted += f"\n- Strong Areas: {', '.join(context['strong_areas'][:3])}"
+    
+    return formatted

@@ -5,7 +5,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from ..core.database import get_db
-from ..services.learning_path_service import generate_learning_path
+from ..services.tutor import generate_learning_path
 
 router = APIRouter(prefix="/learning-path", tags=["Learning Path"])
 

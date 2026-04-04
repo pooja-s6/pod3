@@ -217,3 +217,10 @@ curl "http://localhost:8000/api/v1/usage/student_123"
 - [ ] Caching layer for frequently asked questions
 - [ ] User authentication and role-based access
 - [ ] Admin dashboard for monitoring
+
+cd pod3
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+# Create .env with OPENAI_API_KEY
+uvicorn app.main:app --reload
