@@ -116,7 +116,8 @@ FEEDBACK APPROACH:
     
     def build_system_prompt(self, mode: str = "normal", lesson_context: str = None, quiz_context: str = None) -> str:
         """Build system prompt based on mode and additional context."""
-        system_prompt = self.mode_systems.get(mode, self.NORMAL_MODE_SYSTEM)
+        mode_key = mode.lower() if mode else "normal"
+        system_prompt = self.mode_systems.get(mode_key, self.NORMAL_MODE_SYSTEM)
         
         # Add lesson context if provided
         if lesson_context:
