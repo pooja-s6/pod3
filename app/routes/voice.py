@@ -7,7 +7,7 @@ import os
 import time
 from io import BytesIO
 
-from ..services.core import ai_service
+from ..services.core import ai_service, prompt_builder
 from ..services.chatbot import session_service, analytics_service
 from ..core.config import settings
 
@@ -24,6 +24,7 @@ async def transcribe_audio(file: UploadFile = File(...)):
     Accepts: MP3, WAV, M4A, OGG, FLAC, PCM
     Returns: Transcribed text that user can review and confirm
     """
+    temp_file_path = None
     try:
         if not settings.ENABLE_VOICE:
             raise HTTPException(status_code=503, detail="Voice features are disabled")
@@ -51,10 +52,12 @@ async def transcribe_audio(file: UploadFile = File(...)):
         }
     
     except HTTPException:
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
         raise
     except Exception as e:
         # Clean up temp file
-        if 'temp_file_path' in locals() and os.path.exists(temp_file_path):
+        if temp_file_path and os.path.exists(temp_file_path):
             os.remove(temp_file_path)
         raise HTTPException(status_code=500, detail=f"Transcription failed: {str(e)}")
 
@@ -156,6 +159,8 @@ async def voice_chat_with_speech(
         return response_data
     
     except HTTPException:
+        if temp_file_path and os.path.exists(temp_file_path):
+            os.remove(temp_file_path)
         raise
     except Exception as e:
         if temp_file_path and os.path.exists(temp_file_path):

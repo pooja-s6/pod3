@@ -61,7 +61,7 @@ async def upload_document(
             )
             
             if result['status'] != 'success':
-                raise HTTPException(status_code=400, detail=result['message'])
+                raise HTTPException(status_code=400, detail=result.get('message', 'Upload failed'))
             
             # Log analytics
             analytics_service.log_query(
@@ -79,7 +79,7 @@ async def upload_document(
                 file_type=result['file_type'],
                 content_preview=result['content_preview'],
                 total_characters=result['total_characters'],
-                message=result['message']
+                message=result.get('message', 'Document processed successfully')
             )
         
         finally:
@@ -108,7 +108,7 @@ async def get_session_documents(session_id: str):
         if not session_service.validate_session(session_id):
             raise HTTPException(status_code=404, detail="Session not found")
         
-        documents = document_service.get_session_documents(session_id)
+        documents = document_service.list_documents(session_id)
         
         # Convert to DocumentInfo objects
         doc_infos = [
@@ -167,13 +167,18 @@ async def ask_document_question(request: DocumentQuestion):
         # Verify document belongs to this session
         if document['session_id'] != request.session_id:
             raise HTTPException(status_code=403, detail="Document does not belong to this session")
+            
+        # Truncate content if it's too large to fit in OpenAI context limit (approx 8192 tokens max, allocating ~4000 for document)
+        from ..utils.tokenizer import truncate_context
+        # Use roughly 16000 characters as a very safe buffer for 4000 tokens
+        safe_content = document['content'][:16000] 
         
         # Build system prompt with document context
         system_prompt = f"""You are an AI assistant analyzing a document.
 
 DOCUMENT CONTENT:
 ---
-{document['content']}
+{safe_content}
 ---
 
 INSTRUCTIONS:
@@ -300,7 +305,11 @@ async def delete_session_documents(session_id: str):
         if not session_service.validate_session(session_id):
             raise HTTPException(status_code=404, detail="Session not found")
         
-        count = document_service.clear_session_documents(session_id)
+        docs = document_service.list_documents(session_id)
+        count = 0
+        for doc in docs:
+            if document_service.delete_document(doc['id']):
+                count += 1
         
         return {
             "status": "success",

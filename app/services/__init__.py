@@ -29,18 +29,10 @@ from .chatbot import (
 
 # Tutor Services
 from .tutor import (
-    get_adaptive_learning_path,
-    get_difficulty_adjustment,
-    create_personalized_quiz,
     generate_learning_path,
     update_user_progress,
     batch_update_progress,
     get_user_statistics,
-    evaluate_answer,
-    generate_feedback,
-    generate_recommendations,
-    get_recommendations,
-    acknowledge_recommendation,
     generate_study_summary,
     check_user_engagement,
     send_proactive_message
@@ -63,18 +55,10 @@ __all__ = [
     "DocumentService",
     "document_service",
     # Tutor
-    "get_adaptive_learning_path",
-    "get_difficulty_adjustment",
-    "create_personalized_quiz",
     "generate_learning_path",
     "update_user_progress",
     "batch_update_progress",
     "get_user_statistics",
-    "evaluate_answer",
-    "generate_feedback",
-    "generate_recommendations",
-    "get_recommendations",
-    "acknowledge_recommendation",
     "generate_study_summary",
     "check_user_engagement",
     "send_proactive_message"

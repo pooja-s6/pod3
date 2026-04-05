@@ -9,8 +9,7 @@ import logging
 from .core.config import settings
 from .core.database import create_all_tables
 from .routes import (
-    chat, session, analytics, voice, documents, progress, feedback, 
-    recommend, adaptive, proactive, learning_path
+    chat, session, analytics, voice, documents, progress, proactive, learning_path
 )
 from .services.core import ai_service
 
@@ -41,9 +40,6 @@ app.include_router(analytics.router)
 app.include_router(voice.router)
 app.include_router(documents.router)
 app.include_router(progress.router)
-app.include_router(feedback.router)
-app.include_router(recommend.router)
-app.include_router(adaptive.router)
 app.include_router(proactive.router)
 app.include_router(learning_path.router)
 

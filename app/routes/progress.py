@@ -8,7 +8,8 @@ from ..core.database import get_db
 from ..services.tutor import (
     update_user_progress,
     batch_update_progress,
-    get_user_statistics
+    get_user_statistics,
+    get_topic_progress
 )
 
 router = APIRouter(prefix="/progress", tags=["Progress Tracking"])
