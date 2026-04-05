@@ -168,10 +168,11 @@ async def ask_document_question(request: DocumentQuestion):
         if document['session_id'] != request.session_id:
             raise HTTPException(status_code=403, detail="Document does not belong to this session")
             
-        # Truncate content if it's too large to fit in OpenAI context limit (approx 8192 tokens max, allocating ~4000 for document)
+        # Truncate content if it's too large to fit in OpenAI context limit (approx 8192 tokens max)
         from ..utils.tokenizer import truncate_context
-        # Use roughly 16000 characters as a very safe buffer for 4000 tokens
-        safe_content = document['content'][:16000] 
+        # Use roughly 8000 characters as a very safe buffer (approx 1500-2000 tokens)
+        # to leave plenty of room for chat history and the AI's response!
+        safe_content = document['content'][:8000] 
         
         # Build system prompt with document context
         system_prompt = f"""You are an AI assistant analyzing a document.
